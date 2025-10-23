@@ -158,6 +158,3 @@ Este projeto foi desenvolvido em dupla, com divisão de responsabilidades:
 
 ---
 
-**Desenvolvido por:** [Seu Nome] e [Nome da Dupla]  
-**Disciplina:** Sistemas Operacionais - IMD0036  
-**Instituto:** Metrópole Digital
