@@ -48,7 +48,6 @@ Projeto_Trens/
 │   ├── trem.h           # Declaração da classe Trem
 │   ├── trem.cpp         # Implementação da classe Trem
 │   └── Trem.pro         # Arquivo de projeto Qt
-├── INSTRUCOES_DUPLA.md  # Instruções para desenvolvimento em dupla
 └── README.md            # Este arquivo
 ```
 
@@ -93,59 +92,6 @@ make
 - **0** - Trem parado
 - **200** - Velocidade máxima
 - Controle individual para cada trem
-
-## 📊 Status do Projeto
-
-### **✅ Implementado:**
-- [x] 6 trens com movimento correto
-- [x] 7 mutexes para sincronização
-- [x] Sistema anti-deadlock
-- [x] Interface gráfica básica
-- [x] Início automático dos trens
-
-### **🔄 Em Desenvolvimento:**
-- [ ] Controle de velocidade via sliders
-- [ ] Cores dos trens na interface
-- [ ] Testes e validação final
-
-## 👥 Desenvolvimento em Dupla
-
-Este projeto foi desenvolvido em dupla, com divisão de responsabilidades:
-
-### **Parte 1 (Completa):**
-- Implementação dos 6 trens
-- Sistema de sincronização
-- Lógica de movimento
-- Proteção contra deadlocks
-
-### **Parte 2 (Pendente):**
-- Controle de velocidade
-- Interface visual completa
-- Testes e validação
-- Gravação do vídeo explicativo
-
-## 📝 Critérios de Avaliação
-
-### **Requisitos Obrigatórios:**
-- ✅ Evitar colisões entre trens
-- ✅ Evitar deadlocks
-- ✅ Usar mutexes/semáforos para sincronização
-- ✅ Cada trem em thread independente
-- ✅ Controle de velocidade (0-200)
-- ✅ Interface gráfica conforme especificação
-
-### **Pontuação:**
-- **0 pontos:** Não atende requisitos básicos
-- **4 pontos:** Evita colisões, mas tem deadlocks
-- **4-10 pontos:** Sem colisões nem deadlocks (nota proporcional à qualidade)
-
-## 🎯 Objetivos Alcançados
-
-- **Máximo assincronismo** - Cada trem executa independentemente
-- **Sincronização eficiente** - Uso inteligente de mutexes
-- **Prevenção de deadlocks** - Estratégia robusta implementada
-- **Interface intuitiva** - Controles claros e visuais
-- **Código limpo** - Bem documentado e organizado
 
 ## 📚 Conceitos Aplicados
 
