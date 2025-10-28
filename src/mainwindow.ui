@@ -270,7 +270,8 @@
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">QLabel { background: green; border: 2px solid black}</string>
+    <string notr="true">QLabel { background: green;
+border: 2px solid black}</string>
     </property>
     <property name="text">
      <string>T1</string>
@@ -288,8 +289,9 @@
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">QLabel { background: red; border: 2px solid black}</string>
-    </property>
+     <string notr="true">QLabel { background: red;
+border: 2px solid black}</string>
+</property>
     <property name="text">
      <string>T2</string>
     </property>
@@ -306,8 +308,9 @@
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">QLabel { background: blue; border: 2px solid black}</string>
-    </property>
+ <string notr="true">QLabel { background: blue;
+border: 2px solid black}</string>
+</property>
     <property name="text">
      <string>T3</string>
     </property>
@@ -324,8 +327,9 @@
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">QLabel { background: orange; border: 2px solid black}</string>
-    </property>
+ <string notr="true">QLabel { background: orange;
+border: 2px solid black}</string>
+</property>
     <property name="text">
      <string>T4</string>
     </property>
@@ -342,8 +346,9 @@
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">QLabel { background: purple; border: 2px solid black}</string>
-    </property>
+ <string notr="true">QLabel { background: purple;
+border: 2px solid black}</string>
+</property>
     <property name="text">
      <string>T5</string>
     </property>
@@ -360,8 +365,9 @@
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">QLabel { background: black; color: white; border: 2px solid white}</string>
-    </property>
+ <string notr="true">QLabel { background: black;
+color: white; border: 2px solid white}</string>
+</property>
     <property name="text">
      <string>T6</string>
     </property>
