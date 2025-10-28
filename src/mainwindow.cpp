@@ -7,7 +7,6 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    //Cria os 6 trens com suas posições iniciais
     // Trens internos (1-5): malha interna
     trem1 = new Trem(1, 60, 30);   // Verde - canto superior esquerdo
     trem2 = new Trem(2, 200, 30);  // Vermelho - centro superior
@@ -38,25 +37,26 @@ MainWindow::MainWindow(QWidget *parent) :
     trem6->start();
 }
 
-//Função que será executada quando o sinal UPDATEGUI for emitido
+//Função que será executada quando o sinal UPDATEGUI for emitido 
 void MainWindow::updateInterface(int id, int x, int y){
+    //Cada caso atualiza a posição dos trens
     switch(id){
-    case 1: //Atualiza a posição do trem1 (Verde)
+    case 1: 
         ui->label_trem1->setGeometry(x,y,21,17);
         break;
-    case 2: //Atualiza a posição do trem2 (Vermelho)
+    case 2:
         ui->label_trem2->setGeometry(x,y,21,17);
         break;
-    case 3: //Atualiza a posição do trem3 (Azul)
+    case 3: 
         ui->label_trem3->setGeometry(x,y,21,17);
         break;
-    case 4: //Atualiza a posição do trem4 (Laranja)
+    case 4: 
         ui->label_trem4->setGeometry(x,y,21,17);
         break;
-    case 5: //Atualiza a posição do trem5 (Roxo)
+    case 5: 
         ui->label_trem5->setGeometry(x,y,21,17);
         break;
-    case 6: //Atualiza a posição do trem6 (Preto)
+    case 6: 
         ui->label_trem6->setGeometry(x,y,21,17);
         break;
     default:
@@ -69,4 +69,32 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-// TODO: Caio Medeiros deve implementar controle de velocidade (sliders)
+void MainWindow::on_sliderTrem1_valueChanged(int value)
+{
+    trem1->setVelocidade(value);
+}
+
+void MainWindow::on_sliderTrem2_valueChanged(int value)
+{
+    trem2->setVelocidade(value);
+}
+
+void MainWindow::on_sliderTrem3_valueChanged(int value)
+{
+    trem3->setVelocidade(value);
+}
+
+void MainWindow::on_sliderTrem4_valueChanged(int value)
+{
+    trem4->setVelocidade(value);
+}
+
+void MainWindow::on_sliderTrem5_valueChanged(int value)
+{
+    trem5->setVelocidade(value);
+}
+
+void MainWindow::on_sliderTrem6_valueChanged(int value)
+{
+    trem6->setVelocidade(value);
+}

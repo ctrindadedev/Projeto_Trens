@@ -18,76 +18,79 @@ Trem::Trem(int ID, int x, int y){
     velocidade = 100;
 }
 
-// TODO: Caio Medeiros deve implementar setVelocidade()
+
+void Trem::setVelocidade(int vel){
+    // O slider vai de 0 (parado) a 200 (max) 
+    // A velocidade é o tempo de sleep.
+    this->velocidade = 200 - vel;
+}
 
 //Função a ser executada após executar trem->START
 void Trem::run(){
     while(true){
         if(ID >= 1 && ID <= 5){
-            moverTremInterno(); // Trens 1-5: malha interna, horário
+            moverTremInterno(); 
         } else if(ID == 6){
-            moverTremExterno(); // Trem 6: malha externa, anti-horário
+            moverTremExterno(); 
         }
-        
-        emit updateGUI(ID, x, y); // Emite sinal para atualizar interface
+        //Aatualizar interface
+        emit updateGUI(ID, x, y); 
         msleep(velocidade);
     }
 }
 
 // Movimento dos trens internos (1-5) - sentido horário
 void Trem::moverTremInterno(){
-    // Definindo as coordenadas dos percursos para cada trem interno
     // Cada trem tem seu próprio retângulo interno
-    
     switch(ID){
     case 1: // Trem 1 - Retângulo pequeno (esquerda)
         if (y == 30 && x < 200) {
-            if(ocuparRegiao(0)) { // Região crítica 0
+            if(ocuparRegiao(0)) { 
                 x += 10;
                 liberarRegiao(0);
             }
         }
         else if (x == 200 && y < 100) {
-            if(ocuparRegiao(1)) { // Região crítica 1
+            if(ocuparRegiao(1)) { 
                 y += 10;
                 liberarRegiao(1);
             }
         }
         else if (x > 60 && y == 100) {
-            if(ocuparRegiao(2)) { // Região crítica 2
+            if(ocuparRegiao(2)) { 
                 x -= 10;
                 liberarRegiao(2);
             }
         }
         else {
-            if(ocuparRegiao(3)) { // Região crítica 3
+            if(ocuparRegiao(3)) { 
                 y -= 10;
                 liberarRegiao(3);
             }
         }
         break;
         
-    case 2: // Trem 2 - Retângulo médio (centro)
+    case 2: 
         if (y == 30 && x < 400) {
-            if(ocuparRegiao(1)) { // Região crítica 1
+            if(ocuparRegiao(1)) { 
                 x += 10;
                 liberarRegiao(1);
             }
         }
         else if (x == 400 && y < 100) {
-            if(ocuparRegiao(4)) { // Região crítica 4
+            if(ocuparRegiao(4)) { 
                 y += 10;
                 liberarRegiao(4);
             }
         }
         else if (x > 200 && y == 100) {
-            if(ocuparRegiao(2)) { // Região crítica 2
+            if(ocuparRegiao(2)) { 
                 x -= 10;
                 liberarRegiao(2);
             }
         }
         else {
-            if(ocuparRegiao(1)) { // Região crítica 1
+            if(ocuparRegiao(1)) { 
                 y -= 10;
                 liberarRegiao(1);
             }
@@ -96,25 +99,25 @@ void Trem::moverTremInterno(){
         
     case 3: // Trem 3 - Retângulo grande (direita)
         if (y == 30 && x < 600) {
-            if(ocuparRegiao(4)) { // Região crítica 4
+            if(ocuparRegiao(4)) { 
                 x += 10;
                 liberarRegiao(4);
             }
         }
         else if (x == 600 && y < 100) {
-            if(ocuparRegiao(5)) { // Região crítica 5
+            if(ocuparRegiao(5)) { 
                 y += 10;
                 liberarRegiao(5);
             }
         }
         else if (x > 400 && y == 100) {
-            if(ocuparRegiao(4)) { // Região crítica 4
+            if(ocuparRegiao(4)) {
                 x -= 10;
                 liberarRegiao(4);
             }
         }
         else {
-            if(ocuparRegiao(4)) { // Região crítica 4
+            if(ocuparRegiao(4)) { 
                 y -= 10;
                 liberarRegiao(4);
             }
@@ -123,25 +126,25 @@ void Trem::moverTremInterno(){
         
     case 4: // Trem 4 - Retângulo inferior esquerdo
         if (y == 100 && x < 200) {
-            if(ocuparRegiao(2)) { // Região crítica 2
+            if(ocuparRegiao(2)) { 
                 x += 10;
                 liberarRegiao(2);
             }
         }
         else if (x == 200 && y < 170) {
-            if(ocuparRegiao(6)) { // Região crítica 6
+            if(ocuparRegiao(6)) { 
                 y += 10;
                 liberarRegiao(6);
             }
         }
         else if (x > 60 && y == 170) {
-            if(ocuparRegiao(3)) { // Região crítica 3
+            if(ocuparRegiao(3)) { 
                 x -= 10;
                 liberarRegiao(3);
             }
         }
         else {
-            if(ocuparRegiao(2)) { // Região crítica 2
+            if(ocuparRegiao(2)) { 
                 y -= 10;
                 liberarRegiao(2);
             }
@@ -150,25 +153,25 @@ void Trem::moverTremInterno(){
         
     case 5: // Trem 5 - Retângulo inferior direito
         if (y == 100 && x < 400) {
-            if(ocuparRegiao(6)) { // Região crítica 6
+            if(ocuparRegiao(6)) { 
                 x += 10;
                 liberarRegiao(6);
             }
         }
         else if (x == 400 && y < 170) {
-            if(ocuparRegiao(5)) { // Região crítica 5
+            if(ocuparRegiao(5)) { 
                 y += 10;
                 liberarRegiao(5);
             }
         }
         else if (x > 200 && y == 170) {
-            if(ocuparRegiao(6)) { // Região crítica 6
+            if(ocuparRegiao(6)) {
                 x -= 10;
                 liberarRegiao(6);
             }
         }
         else {
-            if(ocuparRegiao(6)) { // Região crítica 6
+            if(ocuparRegiao(6)) {
                 y -= 10;
                 liberarRegiao(6);
             }
@@ -181,25 +184,25 @@ void Trem::moverTremInterno(){
 void Trem::moverTremExterno(){
     // Trem 6 percorre a malha externa no sentido anti-horário
     if (y == 10 && x > 50) {
-        if(ocuparRegiao(0)) { // Região crítica 0
+        if(ocuparRegiao(0)) {
             x -= 10;
             liberarRegiao(0);
         }
     }
     else if (x == 50 && y < 190) {
-        if(ocuparRegiao(3)) { // Região crítica 3
+        if(ocuparRegiao(3)) { 
             y += 10;
             liberarRegiao(3);
         }
     }
     else if (x < 610 && y == 190) {
-        if(ocuparRegiao(5)) { // Região crítica 5
+        if(ocuparRegiao(5)) { 
             x += 10;
             liberarRegiao(5);
         }
     }
     else {
-        if(ocuparRegiao(0)) { // Região crítica 0
+        if(ocuparRegiao(0)) { 
             y -= 10;
             liberarRegiao(0);
         }
