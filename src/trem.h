@@ -3,7 +3,6 @@
 
 #include <QThread>
 #include <QMutex>
-#include <QSemaphore>
 
 /*
  * Classe Trem herda QThread
@@ -15,35 +14,30 @@
 class Trem: public QThread{
  Q_OBJECT
 public:
-    Trem(int,int,int);  
-    void run();         //função a ser executada pela thread
+    Trem(int,int,int, QMutex*, QMutex*, QMutex*, QMutex*, QMutex*, QMutex*, QMutex*);
+    void run(); // Função a ser executada pela thread
 
     void setVelocidade(int vel);
 
-    // Mutexes para as 7 regiões críticas
-    static QMutex mutexRegiao0; 
-    static QMutex mutexRegiao1; 
-    static QMutex mutexRegiao2; 
-    static QMutex mutexRegiao3;  
-    static QMutex mutexRegiao4;  
-    static QMutex mutexRegiao5; 
-    static QMutex mutexRegiao6;  
-
-//Cria um sinal
+// Cria um sinal para atualizar a interface
 signals:
     void updateGUI(int,int,int);
 
 private:
-   int x;          
+// Posições X e  Ydo trem na tela
+   int x;           
    int y;           
    int ID;          
-   int velocidade;  //Tempo de dormir em milisegundos entre a mudança de posição do trem
-   
-   // Funções auxiliares para movimento
-   void moverTremInterno();  // Movimento dos trens 1-5 (malha interna, horário)
-   void moverTremExterno();  // Movimento do trem 6 (malha externa, anti-horário)
-   bool ocuparRegiao(int regiao); 
-   void liberarRegiao(int regiao); 
+   int velocidade;  // Velocidade (tempo de sleep em ms)
+
+   // Ponteiros para os mutexes das 7 regiões críticas (recebidos da MainWindow)
+   QMutex *mutex0;
+   QMutex *mutex1;
+   QMutex *mutex2;
+   QMutex *mutex3;
+   QMutex *mutex4;
+   QMutex *mutex5;
+   QMutex *mutex6;
 };
 
-#endif 
+#endif
