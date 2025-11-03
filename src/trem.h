@@ -24,8 +24,6 @@ public:
     //Cria um sinal
 signals:
     void updateGUI(int ID, int x, int y, int vel);
-    void ocupaTrilho(int id_Trem, int id_Trilho);
-    void desocupaTrilho(int id_Trilho);
 
 
 private:
@@ -33,6 +31,10 @@ private:
     int y;           //posição Y do trem na tela
     int ID;          //ID do trem
     int vel;  //tempo de dormir em milisegundos entre a mudança de posição do trem
+
+    // Funções de ajuda para controle de semáforo
+    void entrarNaRegiao(int id_Trilho);
+    void entrarNaRegiao(int id_Trilho, int id_Trilho_Dependente);
 };
 
-#endif 
+#endif
