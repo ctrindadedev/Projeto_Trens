@@ -1,254 +1,221 @@
 #include "trem.h"
+#include "mainwindow.h"
 #include <QtCore>
-#include <QDebug> 
 
-Trem::Trem(int ID, int x, int y, QMutex *m0, QMutex *m1, QMutex *m2, QMutex *m3, QMutex *m4, QMutex *m5, QMutex *m6){
+Trem::Trem(int ID, int x, int y, int vel){
     this->ID = ID;
     this->x = x;
     this->y = y;
-    this->velocidade = 100; //(Meia barra +-)
-
-    //Ponteiros dos mutexes
-    this->mutex0 = m0;
-    this->mutex1 = m1;
-    this->mutex2 = m2;
-    this->mutex3 = m3;
-    this->mutex4 = m4;
-    this->mutex5 = m5;
-    this->mutex6 = m6;
+    // Garante que a velocidade inicial esteja dentro dos limites 0-200 
+    setVel(vel); 
 }
 
-void Trem::setVelocidade(int vel){
-    // O slider vai de 0 (parado) a 200 (max) e a velocidade é o tempo do sleep
-    this->velocidade = 200 - vel;
-}
-
-
+//Função a ser executada após executar trem->START
 void Trem::run(){
     while(true){
-        switch(ID){
-        case 1: // Trem 1 (Verde) - Percurso: (60,30) -> (330,30) -> (330,150) -> (60,150) -> (60,30)
-            if (y == 30 && x < 330){ // Move para direita no trilho superior
-                if (x == 310) { // Próximo da região crítica 1
-                    mutex1->lock(); // Trava RC1
-                    x += 10;
-                } else if (x == 180) { // Próximo da região crítica 0
-                    mutex0->lock(); // Trava RC0
-                    x += 10;
+        // O trem só se move se a velocidade for maior que 0 
+        if(vel > 0) 
+        {
+            switch(ID){
+            case 1:     //Trem 1 (Verde)
+                if (x == 290 && y==40)
+                    emit ocupaTrilho(this->ID, 0);
+                else if(x==290 && y == 160){
+                    x-=10;
+                    emit desocupaTrilho(0);
                 }
-                 else x += 10;
-            }
-            else if (x == 330 && y < 150){ // Move para baixo no trilho direito
-                 if(y==130){ // Saindo da RC1, Próximo da RC4
-                     mutex1->unlock(); // Libera RC1
-                     mutex4->lock(); // Trava RC4
-                     y+=10;
-                 } else if (y == 10) { // Saindo da RC0
-                     mutex0->unlock(); // Libera RC0
-                     y += 10;
-                 }
-                 else y += 10;
-            }
-            else if (x > 60 && y == 150){ // Move para esquerda no trilho inferior
-                if (x == 200) { // Saindo da RC4, Próximo da RC3
-                    mutex4->unlock(); // Libera RC4
-                    mutex3->lock(); // Trava RC3
-                    x -= 10;
-                } else x -= 10;
-            }
-            else { // Move para cima no trilho esquerdo
-                if (y == 50) { // Saindo da RC3
-                    mutex3->unlock(); // Libera RC3
-                    y -= 10;
-                } else y -= 10;
-            }
-            break;
-        case 2: // Trem 2 (Vermelho) - Percurso: (330,30) -> (600,30) -> (600,150) -> (330,150) -> (330,30)
-            if (y == 30 && x < 600){ // Move para direita no trilho superior
-                if (x == 580) { // Próximo da RC2
-                    mutex2->lock(); // Trava RC2
-                    x += 10;
-                } else if(x == 350) { // Saindo da RC1, Próximo da RC0
-                    mutex1->unlock(); // Libera RC1
-                    mutex0->lock(); // Trava RC0
-                    x += 10;
+                else if (x == 310 && y == 140)
+                    emit ocupaTrilho(this->ID, 2);
+                else if (x == 150 && y == 160){
+                    x-=10;
+                    emit desocupaTrilho(2);
                 }
-                else x += 10;
-            }
-            else if (x == 600 && y < 150){ // Move para baixo no trilho direito
-                if (y == 130) { // Saindo da RC2, Próximo da RC5
-                    mutex2->unlock(); // Libera RC2
-                    mutex5->lock(); // Trava RC5
-                    y += 10;
-                } else if (y==10) { // Saindo da RC0
-                    mutex0->unlock(); // Libera RC0
-                    y += 10;
-                }
-                 else y += 10;
-            }
-            else if (x > 330 && y == 150){ // Move para esquerda no trilho inferior
-                if (x == 470) { // Saindo da RC5, Próximo da RC4
-                    mutex5->unlock(); // Libera RC5
-                    mutex4->lock(); // Trava RC4
-                     x -= 10;
-                }
-                else x -= 10;
-            }
-            else { // Move para cima no trilho esquerdo
-                if (y == 50) { // Saindo da RC4, Próximo da RC1
-                    mutex4->unlock(); // Libera RC4
-                    mutex1->lock(); // Trava RC1
-                     y -= 10;
-                }
-                 else y -= 10;
-            }
-            break;
-        case 3: // Trem 3 (Azul) - Percurso: (600,30) -> (870,30) -> (870,150) -> (600,150) -> (600,30)
-            if (y == 30 && x < 870){ // Move para direita no trilho superior
-                 if (x == 620) { // Saindo da RC2
-                    mutex2->unlock(); // Libera RC2
-                    x += 10;
-                 }
-                else { // Continua movendo para a direita
-                    x += 10;
-                }
-            }
-            else if (x == 870 && y < 150){ // Move para baixo no trilho direito
-                // Nenhuma RC neste segmento
-                y += 10;
-            }
-            else if (x > 600 && y == 150){ // Move para esquerda no trilho inferior
-                if (x == 740) { // Próximo da RC5
-                    mutex5->lock(); // Trava RC5
-                    x -= 10;
-                 }
-                 else { // Continua movendo para a esquerda
-                    x -= 10;
-                 }
-            }
-            else { // Move para cima no trilho esquerdo (x == 600)
-                if (y == 50) { // Saindo da RC5, Próximo da RC2
-                    mutex5->unlock(); // Libera RC5
-                    mutex2->lock(); // Trava RC2
-                    y -= 10;
-                 } else { // Continua movendo para cima
-                     y -= 10;
-                 }
-            }
-            break;
-        case 4: // Trem 4 (Laranja) - Percurso: (200,150) -> (470,150) -> (470,270) -> (200,270) -> (200,150)
-            if (y == 150 && x < 470){ // Move para direita no trilho superior (do T4)
-                if (x == 310) { // Próximo da RC4
-                    mutex4->lock(); // Trava RC4
-                    x += 10;
-                } else if (x == 220) { // Saindo da RC3
-                    mutex3->unlock(); // Libera RC3
-                    x += 10;
-                } else x += 10;
-            }
-            else if (x == 470 && y < 270){ // Move para baixo no trilho direito (do T4)
-                if (y == 170) { // Saindo da RC4, Próximo da RC5
-                    mutex4->unlock(); // Libera RC4
-                    mutex5->lock(); // Trava RC5
-                    y += 10;
-                } else y += 10;
-            }
-            else if (x > 200 && y == 270){ // Move para esquerda no trilho inferior (do T4)
-                if (x == 350) { // Próximo da RC6
-                    mutex6->lock(); // Trava RC6
-                    x -= 10;
-                } else if(x == 450) { // Saindo da RC5
-                    mutex5->unlock(); // Libera RC5
-                    x -= 10;
-                } else x -= 10;
-            }
-            else { // Move para cima no trilho esquerdo (do T4)
-                if (y == 170) { // Saindo da RC6, Próximo da RC3
-                    mutex6->unlock(); // Libera RC6
-                    mutex3->lock(); // Trava RC3
-                    y -= 10;
-                } else y -= 10;
-            }
-            break;
-        case 5: // Trem 5 (Roxo) - Percurso: (470,150) -> (740,150) -> (740,270) -> (470,270) -> (470,150)
-            if (y == 150 && x < 740){ // Move para direita no trilho superior (do T5)
-                if (x == 580) { // Próximo da RC5
-                    mutex5->lock(); // Trava RC5
-                    x += 10;
-                } else if(x == 490) { // Saindo da RC4
-                     mutex4->unlock(); // Libera RC4
-                     x += 10;
-                 }
-                else x += 10;
-            }
-            else if (x == 740 && y < 270){ // Move para baixo no trilho direito (do T5)
-                if (y==170){ // Saindo da RC5
-                     mutex5->unlock(); // Libera RC5
-                     y+=10;
-                 } else y += 10;
-            }
-            else if (x > 470 && y == 270){ // Move para esquerda no trilho inferior (do T5)
-                if (x == 620) { // Próximo da RC6
-                    mutex6->lock(); // Trava RC6
-                     x -= 10;
-                 }
-                 else x -= 10;
-            }
-            else { // Move para cima no trilho esquerdo (do T5)
-                 if(y==170){ // Saindo da RC6, Próximo da RC4
-                     mutex6->unlock(); // Libera RC6
-                     mutex4->lock(); // Trava RC4
-                     y-=10;
-                 } else y -= 10;
-            }
-            break;
-        case 6: // Trem 6 (Preto) - Percurso Externo Anti-horário 
-                // (470, 10) -> (50, 10) -> (50, 270) -> (870, 270) -> (870, 10) -> (470, 10)
-            if (y == 10 && x > 50) { // Move para esquerda no trilho superior externo
-                 if (x == 350) { // Próximo da RC0
-                     mutex0->lock(); // Trava RC0
-                     x-=10;
-                 } else if (x == 620){ // Próximo da RC2
-                     mutex2->lock(); // Trava RC2
-                     x-=10;
-                 } else x -= 10;
-            }
-            else if (x == 50 && y < 270) { // Move para baixo no trilho esquerdo externo
-                if (y == 30) { // Saindo da RC0
-                    mutex0->unlock(); // Libera RC0
-                    y+=10;
-                } else if(y==130){ // Próximo da RC3
-                    mutex3->lock(); // Trava RC3
-                    y+=10;
-                } else y += 10;
-            }
-            else if (x < 870 && y == 270) { // Move para direita no trilho inferior externo
-                if(x==180){ // Saindo da RC3
-                    mutex3->unlock(); // Libera RC3
+                else if (y == 40 && x <310)
                     x+=10;
-                } else if (x == 450) { // Próximo da RC6
-                    mutex6->lock(); // Trava RC6
-                     x += 10;
-                 } else if(x == 720){ // Saindo da RC6
-                     mutex6->unlock(); // Libera RC6
-                     x+=10;
-                 } else x += 10;
+                else if (x == 310 && y < 160)
+                    y+=10;
+                else if (x > 40 && y == 160)
+                    x-=10;
+                else
+                    y-=10;
+                emit updateGUI(ID, x, y, vel); 
+                break;
+            case 2: //Trem 2 (Vermelho)
+                if (x == 330 && y==160){
+                    emit ocupaTrilho(this->ID, 0);
+                }
+                else if(x==310 && y == 40){
+                    x+=10;
+                    emit desocupaTrilho(0);
+                }
+                else if (x == 560 && y==40){
+                    emit ocupaTrilho(this->ID, 1);
+                }
+                else if(x==560 && y == 160){
+                    x-=10;
+                    emit desocupaTrilho(1);
+                }
+                else if (x == 460 && y==160){
+                    emit ocupaTrilho(this->ID, 3);
+                }
+                else if(x==310 && y == 140){
+                    y-=10;
+                    emit desocupaTrilho(3);
+                }
+                else if (x == 580 && y==140){
+                    emit ocupaTrilho(this->ID, 4);
+                }
+                else if(x==420 && y == 160){
+                    x-=10;
+                    emit desocupaTrilho(4);
+                }
+                else if (y == 40 && x <580)
+                    x+=10;
+                else if (x == 580 && y < 160)
+                    y+=10;
+                else if (x > 310 && y == 160)
+                    x-=10;
+                else
+                    y-=10;
+                emit updateGUI(ID, x, y, vel); 
+                break;
+            case 3: //Trem 3 (Azul)
+                if (x == 730 && y==160){
+                    emit ocupaTrilho(this->ID, 5);
+                }
+                else if(x==580 && y == 140){
+                    y-=10;
+                    emit desocupaTrilho(5);
+                }
+                else if (x == 600 && y==160){
+                    emit ocupaTrilho(this->ID, 1);
+                }
+                else if(x == 600 && y == 40){
+                    x+=10;
+                    emit desocupaTrilho(1);
+                }
+                else if (y == 40 && x <850)
+                    x+=10;
+                else if (x == 850 && y < 160)
+                    y+=10;
+                else if (x > 580 && y == 160)
+                    x-=10;
+                else
+                    y-=10;
+                emit updateGUI(ID, x, y, vel);  
+                break;
+            case 4: //Trem 4 (Laranja)
+                if (x == 170 && y==180){
+                    emit ocupaTrilho(this->ID, 2);
+                }
+                else if(x==330 && y == 160){
+                    x+=10;
+                    emit desocupaTrilho(2);
+                }
+                else if (x == 290 && y==160){
+                    emit ocupaTrilho(this->ID, 3);
+                }
+                else if(x == 440 && y == 180){
+                    y+=10;
+                    emit desocupaTrilho(3);
+                }
+                else if (x == 420 && y==160){
+                    emit ocupaTrilho(this->ID, 6);
+                }
+                else if(x == 420 && y == 280){
+                    x-=10;
+                    emit desocupaTrilho(6);
+                }
+                else if (y == 160 && x <440)
+                    x+=10;
+                else if (x == 440 && y < 280)
+                    y+=10;
+                else if (x > 170 && y == 280)
+                    x-=10;
+                else
+                    y-=10;
+                emit updateGUI(ID, x, y, vel);
+                break;
+            case 5: //Trem 5 (Roxo)
+                if (x == 440 && y== 180){
+                    emit ocupaTrilho(this->ID, 4);
+                }
+                else if(x == 600 && y == 160){
+                    x+=10;
+                    emit desocupaTrilho(4);
+                }
+                else if (x == 560 && y==160){
+                    emit ocupaTrilho(this->ID, 5);
+                }
+                else if(x == 710 && y == 180){
+                    y+=10;
+                    emit desocupaTrilho(5);
+                }
+                else if (x == 460 && y==280){
+                    emit ocupaTrilho(this->ID, 6);
+                }
+                else if(x == 460 && y == 160){
+                    x+=10;
+                    emit desocupaTrilho(6);
+                }
+                else if (y == 160 && x <710)
+                    x+=10;
+                else if (x == 710 && y < 280)
+                    y+=10;
+                else if (x > 440 && y == 280)
+                    x-=10;
+                else
+                    y-=10;
+                emit updateGUI(ID, x, y, vel); 
+                break;
+            
+            //  Trem 6 (preto) malha externa
+            case 6: 
+                if (x == 20 && y > 20)  
+                    y-=10;
+                else if (y == 20 && x < 870) 
+                    x+=10;
+                else if (x == 870 && y < 300) 
+                    y+=10;
+                else if (y == 300 && x > 20) 
+                    x-=10;
+                
+                emit updateGUI(ID, x, y, vel);    //Emite um sinal
+                break;
+            default:
+                break;
             }
-            else { // Move para cima no trilho direito externo
-                if (y == 170) { // Próximo da RC5
-                    mutex5->lock(); // Trava RC5
-                     y -= 10;
-                 } else if (y==50){ // Saindo da RC2 e RC5
-                     mutex2->unlock(); // Libera RC2
-                     mutex5->unlock(); // Libera RC5
-                     y-=10;
-                 } else y -= 10;
-            }
-            break;
-        default:
-            break;
+            msleep(200 - vel);
         }
-        emit updateGUI(ID, x, y); 
-        msleep(velocidade);       
+        else {
+            // Se vel == 0, apenas dorme para não consumir CPU
+            msleep(200);
+        }
     }
 }
+
+void Trem::setVel(int value){
+    // Garante que a velocidade esteja entre 0 e 200 
+    if (value < 0)
+        this->vel = 0;
+    else if (value > 200)
+        this->vel = 200;
+    else
+        this->vel = value;
+}
+
+int Trem::getX(){
+    return this->x;
+};
+
+void Trem::setX(int x){
+    this->x = x;
+};
+
+int Trem::getY(){
+    return this->y;
+};
+
+void Trem::setY(int y){
+    this->y = y;
+};
