@@ -1,6 +1,10 @@
 #include "trem.h"
 #include "mainwindow.h"
 #include <QtCore>
+#include <QSemaphore>
+
+// Define os semáforos (binários) das 7 regiões críticas
+QSemaphore trilhos[7] = { QSemaphore(1), QSemaphore(1), QSemaphore(1), QSemaphore(1), QSemaphore(1), QSemaphore(1), QSemaphore(1) };
 
 Trem::Trem(int ID, int x, int y, int vel){
     this->ID = ID;
@@ -19,16 +23,16 @@ void Trem::run(){
             switch(ID){
             case 1:     //Trem 1 (Verde)
                 if (x == 290 && y==40)
-                    emit ocupaTrilho(this->ID, 0);
+                    trilhos[0].acquire();
                 else if(x==290 && y == 160){
                     x-=10;
-                    emit desocupaTrilho(0);
+                    trilhos[0].release();
                 }
                 else if (x == 310 && y == 140)
-                    emit ocupaTrilho(this->ID, 2);
+                    trilhos[2].acquire();
                 else if (x == 150 && y == 160){
                     x-=10;
-                    emit desocupaTrilho(2);
+                    trilhos[2].release();
                 }
                 else if (y == 40 && x <310)
                     x+=10;
@@ -42,32 +46,32 @@ void Trem::run(){
                 break;
             case 2: //Trem 2 (Vermelho)
                 if (x == 330 && y==160){
-                    emit ocupaTrilho(this->ID, 0);
+                    trilhos[0].acquire();
                 }
                 else if(x==310 && y == 40){
                     x+=10;
-                    emit desocupaTrilho(0);
+                    trilhos[0].release();
                 }
                 else if (x == 560 && y==40){
-                    emit ocupaTrilho(this->ID, 1);
+                    trilhos[1].acquire();
                 }
                 else if(x==560 && y == 160){
                     x-=10;
-                    emit desocupaTrilho(1);
+                    trilhos[1].release();
                 }
                 else if (x == 460 && y==160){
-                    emit ocupaTrilho(this->ID, 3);
+                    trilhos[3].acquire();
                 }
                 else if(x==310 && y == 140){
                     y-=10;
-                    emit desocupaTrilho(3);
+                    trilhos[3].release();
                 }
                 else if (x == 580 && y==140){
-                    emit ocupaTrilho(this->ID, 4);
+                    trilhos[4].acquire();
                 }
                 else if(x==420 && y == 160){
                     x-=10;
-                    emit desocupaTrilho(4);
+                    trilhos[4].release();
                 }
                 else if (y == 40 && x <580)
                     x+=10;
@@ -81,18 +85,18 @@ void Trem::run(){
                 break;
             case 3: //Trem 3 (Azul)
                 if (x == 730 && y==160){
-                    emit ocupaTrilho(this->ID, 5);
+                    trilhos[5].acquire();
                 }
                 else if(x==580 && y == 140){
                     y-=10;
-                    emit desocupaTrilho(5);
+                    trilhos[5].release();
                 }
                 else if (x == 600 && y==160){
-                    emit ocupaTrilho(this->ID, 1);
+                    trilhos[1].acquire();
                 }
                 else if(x == 600 && y == 40){
                     x+=10;
-                    emit desocupaTrilho(1);
+                    trilhos[1].release();
                 }
                 else if (y == 40 && x <850)
                     x+=10;
@@ -106,25 +110,25 @@ void Trem::run(){
                 break;
             case 4: //Trem 4 (Laranja)
                 if (x == 170 && y==180){
-                    emit ocupaTrilho(this->ID, 2);
+                    trilhos[2].acquire();
                 }
                 else if(x==330 && y == 160){
                     x+=10;
-                    emit desocupaTrilho(2);
+                    trilhos[2].release();
                 }
                 else if (x == 290 && y==160){
-                    emit ocupaTrilho(this->ID, 3);
+                    trilhos[3].acquire();
                 }
                 else if(x == 440 && y == 180){
                     y+=10;
-                    emit desocupaTrilho(3);
+                    trilhos[3].release();
                 }
                 else if (x == 420 && y==160){
-                    emit ocupaTrilho(this->ID, 6);
+                    trilhos[6].acquire();
                 }
                 else if(x == 420 && y == 280){
                     x-=10;
-                    emit desocupaTrilho(6);
+                    trilhos[6].release();
                 }
                 else if (y == 160 && x <440)
                     x+=10;
@@ -138,25 +142,25 @@ void Trem::run(){
                 break;
             case 5: //Trem 5 (Roxo)
                 if (x == 440 && y== 180){
-                    emit ocupaTrilho(this->ID, 4);
+                    trilhos[4].acquire();
                 }
                 else if(x == 600 && y == 160){
                     x+=10;
-                    emit desocupaTrilho(4);
+                    trilhos[4].release();
                 }
                 else if (x == 560 && y==160){
-                    emit ocupaTrilho(this->ID, 5);
+                    trilhos[5].acquire();
                 }
                 else if(x == 710 && y == 180){
                     y+=10;
-                    emit desocupaTrilho(5);
+                    trilhos[5].release();
                 }
                 else if (x == 460 && y==280){
-                    emit ocupaTrilho(this->ID, 6);
+                    trilhos[6].acquire();
                 }
                 else if(x == 460 && y == 160){
                     x+=10;
-                    emit desocupaTrilho(6);
+                    trilhos[6].release();
                 }
                 else if (y == 160 && x <710)
                     x+=10;

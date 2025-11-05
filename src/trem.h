@@ -2,6 +2,7 @@
 #define TREM_H
 
 #include <QThread>
+#include <QSemaphore>
 
 /*
  * Classe Trem herda QThread
@@ -24,8 +25,6 @@ public:
     //Cria um sinal
 signals:
     void updateGUI(int ID, int x, int y, int vel);
-    void ocupaTrilho(int id_Trem, int id_Trilho);
-    void desocupaTrilho(int id_Trilho);
 
 
 private:
@@ -34,5 +33,8 @@ private:
     int ID;          //ID do trem
     int vel;  //tempo de dormir em milisegundos entre a mudança de posição do trem
 };
+
+// Semáforos globais para as 7 regiões críticas
+extern QSemaphore trilhos[7];
 
 #endif 
