@@ -28,8 +28,8 @@ void Trem::run(){
                     sem_wait(&semaforos[2]);
                     x+=10;
                 }
-                else if(x==290 && y == 160){
-                    x-=10;
+                else if(x==300 && y == 40){
+                    x+=10;
                     sem_post(&semaforos[0]);
                     sem_post(&semaforos[2]);
                 }
@@ -37,8 +37,8 @@ void Trem::run(){
                     sem_wait(&semaforos[2]);
                     y+=10;
                 }
-                else if (x == 150 && y == 160){
-                    x-=10;
+                else if (x == 310 && y == 150){
+                    y+=10;
                     sem_post(&semaforos[2]);
                 }
                 else if (y == 40 && x <310)
@@ -56,8 +56,8 @@ void Trem::run(){
                     sem_wait(&semaforos[0]);
                     x-=10;
                 }
-                else if(x==310 && y == 40){
-                    x+=10;
+                else if(x==320 && y == 160){
+                    x-=10;
                     sem_post(&semaforos[0]);
                 }
                 else if (x == 560 && y==40){
@@ -66,8 +66,8 @@ void Trem::run(){
                     sem_wait(&semaforos[5]);
                     x+=10;
                 }
-                else if(x==560 && y == 160){
-                    x-=10;
+                else if(x==570 && y == 40){
+                    x+=10;
                     sem_post(&semaforos[1]);
                     sem_post(&semaforos[5]);
                 }
@@ -75,8 +75,8 @@ void Trem::run(){
                     sem_wait(&semaforos[3]);
                     x-=10;
                 }
-                else if(x==310 && y == 140){
-                    y-=10;
+                else if(x==450 && y == 160){
+                    x-=10;
                     sem_post(&semaforos[3]);
                 }
                 else if (x == 580 && y==140){
@@ -85,8 +85,8 @@ void Trem::run(){
                     sem_wait(&semaforos[4]);
                     y+=10;
                 }
-                else if(x==420 && y == 160){
-                    x-=10;
+                else if(x==580 && y == 150){
+                    y+=10;
                     sem_post(&semaforos[3]);
                     sem_post(&semaforos[4]);
                 }
@@ -107,8 +107,8 @@ void Trem::run(){
                     sem_wait(&semaforos[5]);
                     x-=10;
                 }
-                else if(x==580 && y == 140){
-                    y-=10;
+                else if(x==720 && y == 160){
+                    x-=10;
                     sem_post(&semaforos[1]);
                     sem_post(&semaforos[5]);
                 }
@@ -116,8 +116,8 @@ void Trem::run(){
                     sem_wait(&semaforos[1]);
                     x-=10;
                 }
-                else if(x == 600 && y == 40){
-                    x+=10;
+                else if(x == 590 && y == 160){
+                    x-=10;
                     sem_post(&semaforos[1]);
                 }
                 else if (y == 40 && x <850)
@@ -137,8 +137,8 @@ void Trem::run(){
                     sem_wait(&semaforos[2]);
                     y-=10;
                 }
-                else if(x==330 && y == 160){
-                    x+=10;
+                else if(x==170 && y == 170){
+                    y-=10;
                     sem_post(&semaforos[0]);
                     sem_post(&semaforos[2]);
                 }
@@ -148,8 +148,8 @@ void Trem::run(){
                     sem_wait(&semaforos[4]);
                     x+=10;
                 }
-                else if(x == 440 && y == 180){
-                    y+=10;
+                else if(x == 300 && y == 160){
+                    x+=10;
                     sem_post(&semaforos[3]);
                     sem_post(&semaforos[4]);
                 }
@@ -157,8 +157,8 @@ void Trem::run(){
                     sem_wait(&semaforos[6]);
                     x+=10;
                 }
-                else if(x == 420 && y == 280){
-                    x-=10;
+                else if(x == 430 && y == 160){
+                    x+=10;
                     sem_post(&semaforos[6]);
                 }
                 else if (y == 160 && x <440)
@@ -178,8 +178,8 @@ void Trem::run(){
                     sem_wait(&semaforos[5]);
                     y-=10;
                 }
-                else if(x == 600 && y == 160){
-                    x+=10;
+                else if(x == 440 && y == 170){
+                    y-=10;
                     sem_post(&semaforos[4]);
                     sem_post(&semaforos[5]);
                 }
@@ -187,16 +187,16 @@ void Trem::run(){
                     sem_wait(&semaforos[5]);
                     x+=10;
                 }
-                else if(x == 710 && y == 180){
-                    y+=10;
+                else if(x == 570 && y == 160){
+                    x+=10;
                     sem_post(&semaforos[5]);
                 }
                 else if (x == 460 && y==280){
                     sem_wait(&semaforos[6]);
                     x-=10;
                 }
-                else if(x == 460 && y == 160){
-                    x+=10;
+                else if(x == 450 && y == 280){
+                    x-=10;
                     sem_post(&semaforos[6]);
                 }
                 else if (y == 160 && x <710)
