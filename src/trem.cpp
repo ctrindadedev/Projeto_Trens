@@ -1,6 +1,10 @@
 #include "trem.h"
 #include "mainwindow.h"
 #include <QtCore>
+#include <semaphore.h>
+
+// Declaração externa dos semáforos (definidos em mainwindow.cpp)
+extern sem_t semaforos[7];
 
 Trem::Trem(int ID, int x, int y, int vel){
     this->ID = ID;
@@ -18,17 +22,24 @@ void Trem::run(){
         {
             switch(ID){
             case 1:     //Trem 1 (Verde)
-                if (x == 290 && y==40)
-                    emit ocupaTrilho(this->ID, 0);
+                if (x == 290 && y==40) {
+                    // Aguarda os semáforos 0 e 2 antes de entrar na região crítica
+                    sem_wait(&semaforos[0]);
+                    sem_wait(&semaforos[2]);
+                    x+=10;
+                }
                 else if(x==290 && y == 160){
                     x-=10;
-                    emit desocupaTrilho(0);
+                    sem_post(&semaforos[0]);
+                    sem_post(&semaforos[2]);
                 }
-                else if (x == 310 && y == 140)
-                    emit ocupaTrilho(this->ID, 2);
+                else if (x == 310 && y == 140) {
+                    sem_wait(&semaforos[2]);
+                    y+=10;
+                }
                 else if (x == 150 && y == 160){
                     x-=10;
-                    emit desocupaTrilho(2);
+                    sem_post(&semaforos[2]);
                 }
                 else if (y == 40 && x <310)
                     x+=10;
@@ -42,32 +53,42 @@ void Trem::run(){
                 break;
             case 2: //Trem 2 (Vermelho)
                 if (x == 330 && y==160){
-                    emit ocupaTrilho(this->ID, 0);
+                    sem_wait(&semaforos[0]);
+                    x-=10;
                 }
                 else if(x==310 && y == 40){
                     x+=10;
-                    emit desocupaTrilho(0);
+                    sem_post(&semaforos[0]);
                 }
                 else if (x == 560 && y==40){
-                    emit ocupaTrilho(this->ID, 1);
+                    // Ordem consistente: adquire sempre o menor ID primeiro (1, depois 5)
+                    sem_wait(&semaforos[1]);
+                    sem_wait(&semaforos[5]);
+                    x+=10;
                 }
                 else if(x==560 && y == 160){
                     x-=10;
-                    emit desocupaTrilho(1);
+                    sem_post(&semaforos[1]);
+                    sem_post(&semaforos[5]);
                 }
                 else if (x == 460 && y==160){
-                    emit ocupaTrilho(this->ID, 3);
+                    sem_wait(&semaforos[3]);
+                    x-=10;
                 }
                 else if(x==310 && y == 140){
                     y-=10;
-                    emit desocupaTrilho(3);
+                    sem_post(&semaforos[3]);
                 }
                 else if (x == 580 && y==140){
-                    emit ocupaTrilho(this->ID, 4);
+                    // Ordem consistente: adquire sempre o menor ID primeiro (3, depois 4)
+                    sem_wait(&semaforos[3]);
+                    sem_wait(&semaforos[4]);
+                    y+=10;
                 }
                 else if(x==420 && y == 160){
                     x-=10;
-                    emit desocupaTrilho(4);
+                    sem_post(&semaforos[3]);
+                    sem_post(&semaforos[4]);
                 }
                 else if (y == 40 && x <580)
                     x+=10;
@@ -81,18 +102,23 @@ void Trem::run(){
                 break;
             case 3: //Trem 3 (Azul)
                 if (x == 730 && y==160){
-                    emit ocupaTrilho(this->ID, 5);
+                    // Ordem consistente: adquire sempre o menor ID primeiro (1, depois 5)
+                    sem_wait(&semaforos[1]);
+                    sem_wait(&semaforos[5]);
+                    x-=10;
                 }
                 else if(x==580 && y == 140){
                     y-=10;
-                    emit desocupaTrilho(5);
+                    sem_post(&semaforos[1]);
+                    sem_post(&semaforos[5]);
                 }
                 else if (x == 600 && y==160){
-                    emit ocupaTrilho(this->ID, 1);
+                    sem_wait(&semaforos[1]);
+                    x-=10;
                 }
                 else if(x == 600 && y == 40){
                     x+=10;
-                    emit desocupaTrilho(1);
+                    sem_post(&semaforos[1]);
                 }
                 else if (y == 40 && x <850)
                     x+=10;
@@ -106,25 +132,34 @@ void Trem::run(){
                 break;
             case 4: //Trem 4 (Laranja)
                 if (x == 170 && y==180){
-                    emit ocupaTrilho(this->ID, 2);
+                    // Ordem consistente: adquire sempre o menor ID primeiro (0, depois 2)
+                    sem_wait(&semaforos[0]);
+                    sem_wait(&semaforos[2]);
+                    y-=10;
                 }
                 else if(x==330 && y == 160){
                     x+=10;
-                    emit desocupaTrilho(2);
+                    sem_post(&semaforos[0]);
+                    sem_post(&semaforos[2]);
                 }
                 else if (x == 290 && y==160){
-                    emit ocupaTrilho(this->ID, 3);
+                    // Ordem consistente: adquire sempre o menor ID primeiro (3, depois 4)
+                    sem_wait(&semaforos[3]);
+                    sem_wait(&semaforos[4]);
+                    x+=10;
                 }
                 else if(x == 440 && y == 180){
                     y+=10;
-                    emit desocupaTrilho(3);
+                    sem_post(&semaforos[3]);
+                    sem_post(&semaforos[4]);
                 }
                 else if (x == 420 && y==160){
-                    emit ocupaTrilho(this->ID, 6);
+                    sem_wait(&semaforos[6]);
+                    x+=10;
                 }
                 else if(x == 420 && y == 280){
                     x-=10;
-                    emit desocupaTrilho(6);
+                    sem_post(&semaforos[6]);
                 }
                 else if (y == 160 && x <440)
                     x+=10;
@@ -138,25 +173,31 @@ void Trem::run(){
                 break;
             case 5: //Trem 5 (Roxo)
                 if (x == 440 && y== 180){
-                    emit ocupaTrilho(this->ID, 4);
+                    // Ordem consistente: adquire sempre o menor ID primeiro (4, depois 5)
+                    sem_wait(&semaforos[4]);
+                    sem_wait(&semaforos[5]);
+                    y-=10;
                 }
                 else if(x == 600 && y == 160){
                     x+=10;
-                    emit desocupaTrilho(4);
+                    sem_post(&semaforos[4]);
+                    sem_post(&semaforos[5]);
                 }
                 else if (x == 560 && y==160){
-                    emit ocupaTrilho(this->ID, 5);
+                    sem_wait(&semaforos[5]);
+                    x+=10;
                 }
                 else if(x == 710 && y == 180){
                     y+=10;
-                    emit desocupaTrilho(5);
+                    sem_post(&semaforos[5]);
                 }
                 else if (x == 460 && y==280){
-                    emit ocupaTrilho(this->ID, 6);
+                    sem_wait(&semaforos[6]);
+                    x-=10;
                 }
                 else if(x == 460 && y == 160){
                     x+=10;
-                    emit desocupaTrilho(6);
+                    sem_post(&semaforos[6]);
                 }
                 else if (y == 160 && x <710)
                     x+=10;
