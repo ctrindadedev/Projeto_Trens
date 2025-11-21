@@ -2,8 +2,10 @@
 #include "ui_mainwindow.h"
 #include <semaphore.h>
 
-// Semáforos para as 7 regiões críticas 
-sem_t semaforos [7];
+// Semáforos para as regiões críticas (7 básicas + adicionais para trem 6)
+// 0-6: Regiões críticas básicas da malha interna
+// 7-10: Regiões críticas adicionais para trem 6 (onde cruza com malha interna nas bordas)
+sem_t semaforos [11];
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -36,27 +38,20 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(trem6,SIGNAL(updateGUI(int,int,int,int)),SLOT(updateInterface(int,int,int)));
 
 
-    // Conexões de sinais/slots para controle das regiões críticas (Trens 1-5)
-    connect(trem1,SIGNAL(ocupaTrilho(int,int)),SLOT(ocupaTrilho(int,int)));
-    connect(trem2,SIGNAL(ocupaTrilho(int,int)),SLOT(ocupaTrilho(int,int)));
-    connect(trem3,SIGNAL(ocupaTrilho(int,int)),SLOT(ocupaTrilho(int,int)));
-    connect(trem4,SIGNAL(ocupaTrilho(int,int)),SLOT(ocupaTrilho(int,int)));
-    connect(trem5,SIGNAL(ocupaTrilho(int,int)),SLOT(ocupaTrilho(int,int)));
-
-    connect(trem1,SIGNAL(desocupaTrilho(int)),SLOT(desocupaTrilho(int)));
-    connect(trem2,SIGNAL(desocupaTrilho(int)),SLOT(desocupaTrilho(int)));
-    connect(trem3,SIGNAL(desocupaTrilho(int)),SLOT(desocupaTrilho(int)));
-    connect(trem4,SIGNAL(desocupaTrilho(int)),SLOT(desocupaTrilho(int)));
-    connect(trem5,SIGNAL(desocupaTrilho(int)),SLOT(desocupaTrilho(int)));
-
-    // Inicializa os 7 semáforos para as 7 regiões críticas 
-    sem_init(&semaforos[0], 0, 0);
-    sem_init(&semaforos[1], 0, 0);
-    sem_init(&semaforos[2], 0, 0);
+    // Inicializa os semáforos para todas as regiões críticas (valor 1 = permite 1 acesso)
+    // Regiões críticas básicas (0-6)
+    sem_init(&semaforos[0], 0, 1);
+    sem_init(&semaforos[1], 0, 1);
+    sem_init(&semaforos[2], 0, 1);
     sem_init(&semaforos[3], 0, 1);
-    sem_init(&semaforos[4], 0, 0);
+    sem_init(&semaforos[4], 0, 1);
     sem_init(&semaforos[5], 0, 1);
-    sem_init(&semaforos[6], 0, 0);
+    sem_init(&semaforos[6], 0, 1);
+    // Regiões críticas adicionais para trem 6 (7-10)
+    sem_init(&semaforos[7], 0, 1);  // Borda esquerda (onde trem 6 cruza com malha interna)
+    sem_init(&semaforos[8], 0, 1);  // Borda superior (onde trem 6 cruza com malha interna)
+    sem_init(&semaforos[9], 0, 1);  // Borda direita (onde trem 6 cruza com malha interna)
+    sem_init(&semaforos[10], 0, 1); // Borda inferior (onde trem 6 cruza com malha interna)
 
     // Inicia os trens automaticamente 
     init_trem();
@@ -92,190 +87,6 @@ MainWindow::~MainWindow()
 {
     delete ui;
 }
-
-// Slot que trava a região crítica
-void MainWindow::ocupaTrilho(int id_Trem, int id_Trilho){
-    int aux;
-    switch (id_Trem) {
-    case 1:
-        switch (id_Trilho) {
-        case 0:
-            sem_getvalue(&semaforos[0], &aux);
-            if(aux == 0){
-                break;
-            }
-            sem_getvalue(&semaforos[2], &aux);
-            if(aux == 0){
-                break;
-            }
-            sem_wait(&semaforos[0]);
-            trem1->setX(trem1->getX() + 10);
-            break;
-        case 2:
-            sem_getvalue(&semaforos[2], &aux);
-            if(aux == 0){
-                break;
-            }
-            sem_wait(&semaforos[2]);
-            trem1->setY(trem1->getY() + 10);
-            break;
-        default:
-            break;
-        }
-        break;
-    case 2:
-        switch (id_Trilho) {
-        case 0:
-            sem_getvalue(&semaforos[0], &aux);
-            if(aux == 0){
-                break;
-            }
-            sem_wait(&semaforos[0]);
-            trem2->setX(trem2->getX() - 10);
-            break;
-        case 1:
-            sem_getvalue(&semaforos[1], &aux);
-            if(aux == 0){
-                break;
-            }
-            sem_getvalue(&semaforos[5], &aux);
-            if(aux == 0){
-                break;
-            }
-            sem_wait(&semaforos[1]);
-            trem2->setX(trem2->getX() + 10);
-            break;
-        case 3:
-            sem_getvalue(&semaforos[3], &aux);
-            if(aux == 0){
-                break;
-            }
-            sem_wait(&semaforos[3]);
-            trem2->setX(trem2->getX() - 10);
-            break;
-        case 4:
-            sem_getvalue(&semaforos[4], &aux);
-            if(aux == 0){
-                break;
-            }
-            sem_getvalue(&semaforos[3], &aux);
-            if(aux == 0){
-                break;
-            }
-            sem_wait(&semaforos[4]);
-            trem2->setY(trem2->getY() + 10);
-            break;
-        default:
-            break;
-        }
-        break;
-    case 3:
-        switch (id_Trilho) {
-        case 1:
-            sem_getvalue(&semaforos[1], &aux);
-            if(aux == 0){
-                break;
-            }
-            sem_wait(&semaforos[1]);
-            trem3->setX(trem3->getX() - 10);
-            break;
-        case 5:
-            sem_getvalue(&semaforos[5], &aux);
-            if(aux == 0){
-                break;
-            }
-            sem_getvalue(&semaforos[1], &aux);
-            if(aux == 0){
-                break;
-            }
-            sem_wait(&semaforos[5]);
-            trem3->setX(trem3->getX() - 10);
-            break;
-        default:
-            break;
-        }
-        break;
-    case 4:
-        switch (id_Trilho) {
-        case 2:
-            sem_getvalue(&semaforos[2], &aux);
-            if(aux == 0){
-                break;
-            }
-            sem_getvalue(&semaforos[0], &aux);
-            if(aux == 0){
-                break;
-            }
-            sem_wait(&semaforos[2]);
-            trem4->setY(trem4->getY() - 10);
-            break;
-        case 3:
-            sem_getvalue(&semaforos[3], &aux);
-            if(aux == 0){
-                break;
-            }
-            sem_getvalue(&semaforos[4], &aux);
-            if(aux == 0){
-                break;
-            }
-            sem_wait(&semaforos[3]);
-            trem4->setX(trem4->getX() + 10);
-            break;
-        case 6:
-            sem_getvalue(&semaforos[6], &aux);
-            if(aux == 0){
-                break;
-            }
-            sem_wait(&semaforos[6]);
-            trem4->setX(trem4->getX() + 10);
-            break;
-        default:
-            break;
-        }
-        break;
-    case 5:
-        switch (id_Trilho) {
-        case 4:
-            sem_getvalue(&semaforos[4], &aux);
-            if(aux == 0){
-                break;
-            }
-            sem_getvalue(&semaforos[5], &aux);
-            if(aux == 0){
-                break;
-            }
-            sem_wait(&semaforos[4]);
-            trem5->setY(trem5->getY() - 10);
-            break;
-        case 5:
-            sem_getvalue(&semaforos[5], &aux);
-            if(aux == 0){
-                break;
-            }
-            sem_wait(&semaforos[5]);
-            trem5->setX(trem5->getX() + 10);
-            break;
-        case 6:
-            sem_getvalue(&semaforos[6], &aux);
-            if(aux == 0){
-                break;
-            }
-            sem_wait(&semaforos[6]);
-            trem5->setX(trem5->getX() - 10);
-            break;
-        default:
-            break;
-        }
-        break;
-    default:
-        break;
-    }
-};
-
-// Slot que libera a região crítica
-void MainWindow::desocupaTrilho(int id_Trilho){
-    sem_post(&semaforos[id_Trilho]);
-};
 
 /*
  * Inicia a execução das threads dos trens
